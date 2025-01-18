@@ -1,1 +1,108 @@
-insimpletermz
+create database College
+
+create table Library 
+(
+Book_id int identity(1,1) Primary Key,
+Book_name varchar(100) NOT NULL,
+Author_name varchar(100) NOT NULL,
+Author_contact varchar(100) NOT NULL,
+Genre_name varchar(100) NOT NULL,
+Genre_description varchar(100) NOT NULL,
+)
+
+Select * from library;
+
+insert into Library values ('Learn Python, Advanced', 'John Smith', '1234567890', 'Programming', 'Books about Programming')
+insert into Library values ('Master SQL', 'Jane Doe', '9876543210', 'Database', 'Books about database')
+
+Select * from library;
+
+--Delete & Truncate & Drop
+
+--Delete used to delete a specific row or rows, keeps the structure, The changes can be rolled back with transaction or backup
+Delete from Library where Book_id = 1;
+
+--Truncate used to delete all the rows. keeps the structure, The changes cannot be rolled back
+Truncate Table Library;
+
+--Drop used to drop the table, the structure will be delete, The changes cannot be rolled back
+Drop Table Library;
+
+--1NF
+insert into Library values ('Learn Python', 'John Smith', '1234567890', 'Programming', 'Books about Programming')
+insert into Library values ('Master SQL', 'Jane Doe', '9876543210', 'Database', 'Books about database')
+insert into Library values ('Advance Python', 'John Smith', '1234567890', 'Programming', 'Books about Programming')
+
+Select * from Library;
+
+--2nd Normal Form (2NF)
+Create Table Books
+(
+Book_id int identity(1,1) Primary Key,
+Book_name varchar(100) NOT NULL,
+)
+
+Select * from Books;
+Select * from Library;
+
+insert into Books values ('Learn Python')
+insert into Books values ('Master SQL')
+insert into Books values ('Advance Python')
+
+
+--Author table
+Create Table Author
+(
+Author_id int identity(1,1) Primary Key,
+Author_Name varchar(100) NOT NULL,
+Author_contact varchar(100) NOT NULL,
+Genre_name varchar(100) NOT NULL,
+Genre_description varchar(100) NOT NULL
+)
+
+Select * from Books;
+Select * from Author;
+Select * from Library;
+
+insert into Author values ('John Smith', '1234567890', 'Programming', 'Books about Programming')
+insert into Author values ('Jane Doe', '9876543210', 'Database', 'Books about database')
+
+
+ALTER TABLE Books ADD Author_id int;
+
+update books set Author_id = 1 where book_id = 1
+update books set Author_id = 2 where book_id = 2
+update books set Author_id = 1 where book_id = 3
+
+--3rd Normal Form (3NF)
+
+Create Table Genre
+(
+Genre_id int identity(1,1) Primary Key,
+Genre_name varchar(100) NOT NULL,
+Genre_description varchar(100) NOT NULL
+)
+
+Select * from Books;
+Select * from Author;
+Select * from Genre;
+
+insert into Genre values ('Programming', 'Books about Programming')
+insert into Genre values ('Database', 'Books about database')
+
+Alter Table Author Drop column Genre_Name, Genre_description;
+
+--alter books table with new column (genre_id)
+
+ALTER TABLE Books ADD Genre_id int;
+
+update books set Genre_id = 1 where book_id = 1
+update books set Genre_id = 2 where book_id = 2
+update books set Genre_id = 1 where book_id = 3
+
+
+Select * from Books;
+Select * from Author;
+Select * from Genre;
+Select * from Library;
+
