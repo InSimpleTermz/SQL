@@ -1,0 +1,297 @@
+--Same query for SQL Server and MySQL
+
+--Primary Key, Foreign Key and Not Null Constraints
+
+Create database Office;
+
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY, --Unique keys
+    DepartmentName VARCHAR(50) NOT NULL --It won't allow NULL values, but you can insert NULL as a string
+);
+
+Select * from Departments;
+
+insert into Departments values (1, 'HR')
+insert into Departments values (2, 'Marketing')
+insert into Departments values (3, 'NULL')
+insert into Departments values (3, NULL)
+Update Departments SET DepartmentName = 'IT' where DepartmentID = 3
+
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT, --primary key of a Departments table 
+    FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID) 
+);
+
+Select * from Employees;
+Select * from Departments;
+
+insert into Employees values (1, 'John', 1)
+insert into Employees values (2, 'David', 3)
+insert into Employees values (3, 'Paul', 2)
+
+
+UPDATE Employees SET Emp_DepartmentID = 1 where EmployeeID = 2;
+
+UPDATE Employees SET Emp_DepartmentID = 4 where EmployeeID = 2;
+
+UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'HR';
+
+DELETE Departments where DepartmentID = 2
+
+--1. You can only update an existing parent table values(Departments) in the refered foreign key table(Employees)
+--2. You cannot change an existing parent table values unless it is not referenced in the foreign key table
+
+UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'HR';
+UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'IT';
+
+Select * from Employees;
+Select * from Departments;
+
+--3. You cannot delete an exisiting parent table values unless it is not referenced in the foreign key table. This is called "No Action"
+
+DELETE Departments where DepartmentID = 2
+DELETE Departments where DepartmentID = 4
+
+
+--Is it possible to Update or Delete a parent key? - Yes.
+
+--Using SET DEFAULT 
+--Using SET NULL
+--Using CASCADE
+
+-- 1. SET DEFAULT
+
+Drop Table Employees
+Drop Table Departments
+
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+
+Select * from Departments;
+
+insert into Departments values (1, 'HR')
+insert into Departments values (2, 'Marketing')
+insert into Departments values (3, 'IT')
+insert into Departments values (4, 'Unknown')
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT DEFAULT 4, --primary key of a another table with DEFAULT value
+    FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID)  ON DELETE SET DEFAULT ON UPDATE SET DEFAULT
+);
+
+Select * from Employees;
+Select * from Departments;
+
+insert into Employees values (1, 'John', 1)
+insert into Employees values (2, 'David', 3)
+insert into Employees values (3, 'Paul', 2)
+
+UPDATE Departments SET DepartmentID = 5 where DepartmentName = 'HR';
+
+DELETE Departments where DepartmentID = 2
+
+
+
+
+
+
+
+
+
+--2. SET NULL
+
+Drop Table Employees
+Drop Table Departments
+
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+
+Select * from Departments;
+
+insert into Departments values (1, 'HR')
+insert into Departments values (2, 'Marketing')
+insert into Departments values (3, 'IT')
+insert into Departments values (4, 'Unknown')
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT , --primary key of a another table with NULL value
+    FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID)  ON DELETE SET NULL ON UPDATE SET NULL
+);
+
+Select * from Employees;
+Select * from Departments;
+
+insert into Employees values (1, 'John', 1)
+insert into Employees values (2, 'David', 3)
+insert into Employees values (3, 'Paul', 2)
+
+UPDATE Departments SET DepartmentID = 5 where DepartmentName = 'HR';
+
+DELETE Departments where DepartmentID = 2
+
+
+--3. CASCADE
+
+
+Drop Table Employees
+Drop Table Departments
+
+
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+
+Select * from Departments;
+
+insert into Departments values (1, 'HR')
+insert into Departments values (2, 'Marketing')
+insert into Departments values (3, 'IT')
+insert into Departments values (4, 'Unknown')
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT , --primary key of a another table with NULL value
+    FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID)  ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+Select * from Employees;
+Select * from Departments;
+
+insert into Employees values (1, 'John', 1)
+insert into Employees values (2, 'David', 3)
+insert into Employees values (3, 'Paul', 2)
+
+UPDATE Departments SET DepartmentID = 5 where DepartmentName = 'HR';
+
+DELETE Departments where DepartmentID = 2
+
+
+--How to create a constraint on a existing table
+
+Drop Table Employees
+Drop Table Departments
+
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+
+Select * from Departments;
+
+insert into Departments values (1, 'HR')
+insert into Departments values (2, 'Marketing')
+insert into Departments values (3, 'IT')
+insert into Departments values (4, 'Unknown')
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT 
+);
+
+Select * from Employees;
+Select * from Departments;
+
+insert into Employees values (1, 'John', 1)
+insert into Employees values (2, 'David', 3)
+insert into Employees values (3, 'Paul', 2)
+
+UPDATE Departments SET DepartmentID = 5 where DepartmentName = 'HR';
+
+DELETE Departments where DepartmentID = 2
+
+Select * from Employees;
+Select * from Departments;
+
+Alter Table Employees
+Add Constraint FK_Employee_EmpdepartmentID
+FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID) ON DELETE CASCADE ON UPDATE CASCADE;
+
+UPDATE Departments SET DepartmentID = 1 where DepartmentName = 'HR';
+
+UPDATE Departments SET DepartmentID = 5 where DepartmentName = 'HR';
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    Emp_DepartmentID INT , --primary key of a another table with NULL value
+    FOREIGN KEY (Emp_DepartmentID) REFERENCES Departments(DepartmentID)  ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
+
+--Check Constraint - Ensures that all values in a column satisfy a specific condition.
+
+ALTER TABLE Employees
+ADD Age INT;
+
+Select * from Employees
+Select * from Departments
+
+ALTER TABLE Employees
+ADD Constraint ck_Employees_Age Check (Age > 0 AND Age < 120)
+
+insert into Employees values (5, 'Tim', 3, NULL)
+insert into Employees values (6, 'Tim', 3, -1)
+insert into Employees values (7, 'Tim', 3, 130)
+insert into Employees values (8, 'Tim', 3, 40)
+
+
+--NULL represents "unknown" in SQL
+--When NULL is involved in a condition (like Age > 0 AND Age < 120), the result of the condition is UNKNOWN.
+--A CHECK constraint only fails if the condition evaluates to FALSE.
+--If the condition evaluates to TRUE or UNKNOWN, the constraint allows the value.
+
+
+
+
+
+
+--Unique Constraint 
+-- Ensures that all the values in a column are distinct (no duplicates). Like Primary key.
+--If you want to keep "Multiple" columns unique in your table, You can use Unique key.
+
+ALTER TABLE Employees
+ADD Email varchar(50);
+
+Select * from Employees
+Select * from Departments
+
+ALTER TABLE Employees
+ADD Constraint UK_Employees_Email UNIQUE (Email);
+
+--NULL is acceptable, but only 1 time
+
+truncate table Employees --it keeps the structure and delete all the rows
+
+ALTER TABLE Employees
+ADD Constraint UK_Employees_Email UNIQUE (Email);
+
+insert into Employees values (1, 'John', 3, 20,'Jim@gmail.com')
+insert into Employees values (2, 'David', 4, 25, 'Jim@gmail.com')
+insert into Employees values (3, 'Paul', 2, 45, 'Paul@gmail.com')
+insert into Employees values (4, 'Tim', 5, 50, 'Tim@gmail.com')
+
+Select * from Employees
+Select * from Departments
