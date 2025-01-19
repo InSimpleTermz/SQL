@@ -13,8 +13,10 @@ Select * from Departments;
 
 insert into Departments values (1, 'HR')
 insert into Departments values (2, 'Marketing')
+
 insert into Departments values (3, 'NULL')
 insert into Departments values (3, NULL)
+
 Update Departments SET DepartmentName = 'IT' where DepartmentID = 3
 
 
@@ -34,19 +36,20 @@ insert into Employees values (2, 'David', 3)
 insert into Employees values (3, 'Paul', 2)
 
 
-UPDATE Employees SET Emp_DepartmentID = 1 where EmployeeID = 2;
 
-UPDATE Employees SET Emp_DepartmentID = 4 where EmployeeID = 2;
+--1. You can only update an (Emp_DepartmentID) child table value to any exisiting parent table Primary Key value
+UPDATE Employees SET Emp_DepartmentID = 2 where EmployeeID = 2;
 
+--2. You cannot change or delete an existing parent table primary_key, 
 UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'HR';
-
 DELETE Departments where DepartmentID = 2
 
---1. You can only update an existing parent table values(Departments) in the refered foreign key table(Employees)
---2. You cannot change an existing parent table values unless it is not referenced in the foreign key table
+--unless if it's not referenced in the foreign key table
+UPDATE Departments SET DepartmentID = 3 where DepartmentName = 'HR';
+DELETE Departments where DepartmentID = 3
 
-UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'HR';
-UPDATE Departments SET DepartmentID = 4 where DepartmentName = 'IT';
+--but you can change the other columns in the parent table
+UPDATE Departments SET DepartmentName = 'Accounts' where DepartmentID = 1;
 
 Select * from Employees;
 Select * from Departments;
@@ -57,7 +60,7 @@ DELETE Departments where DepartmentID = 2
 DELETE Departments where DepartmentID = 4
 
 
---Is it possible to Update or Delete a parent key? - Yes.
+--Is it possible to Update or Delete a parent key? - Yes, using cascading referential integrity
 
 --Using SET DEFAULT 
 --Using SET NULL
