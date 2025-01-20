@@ -1,0 +1,76 @@
+
+CREATE TABLE Employees(
+    EmployeeID INT PRIMARY KEY, --Unique Clustered Index
+    EmployeeName VARCHAR(50),
+    Age INT
+);
+
+--When you create a Primary Key, It is by default created as a Unique Clustered Index in SQLServer, MySQL and Etc...
+--A clustered index determines the physical order of data in a table. It rearranges the table rows to match the index.
+
+Select * from Employees;
+
+insert into Employees values (2, 'John', 24)
+insert into Employees values (4, 'David', 43)
+insert into Employees values (1, 'Paul', 31)
+insert into Employees values (3, 'Tim', 40)
+
+
+
+
+
+
+
+--When you create a Unique Constraint, It is by default created as Unique Non-Clustered Index in SQLServer, MySQL and Etc...
+
+ALTER TABLE Employees Add Constraint UQ_Employees_Age UNIQUE (Age)
+
+--A Table can have only one Clustered Index and multiple Non-Clustered Index
+
+Select * from Employees;
+
+insert into Employees values (5, 'Jim', 24)
+
+
+
+--Normal Index
+Create index IX_name 
+on Employees (EmployeeName DESC)
+
+
+Select * from Employees;
+
+--If you want to create a Clustered Index on Name, Then remove the cluster ID constraint from Primary Key and Create a Cluster index on Name. 
+
+ALTER TABLE Employees
+drop Constraint PK__Employee__7AD04FF1E6418DD3
+
+
+Create Clustered index CX_Employees_Name On Employees(EmployeeName ASC)
+
+execute sp_helpindex Employees; --System Stored Procedure
+
+
+--You can create a composite clustered index
+
+Drop Table Employees
+
+
+CREATE TABLE Employees(
+    EmployeeID INT, 
+    EmployeeName VARCHAR(50),
+    Age INT
+);
+
+Select * from Employees;
+
+insert into Employees values (2, 'John', 24)
+insert into Employees values (4, 'David', 43)
+insert into Employees values (1, 'Paul', 31)
+insert into Employees values (3, 'Tim', 40)
+insert into Employees values (6, 'John', 25)
+insert into Employees values (5, 'Paul', 55)
+insert into Employees values (7, 'Edwin', 50)
+
+
+Create Clustered index Com_CX_Employees_Name_Age On Employees(EmployeeName ASC, Age DESC)
