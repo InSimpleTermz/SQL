@@ -1,0 +1,157 @@
+-- Local Temporary Table in SQL Server
+CREATE TABLE #TempTable (
+    ID INT,
+    Name NVARCHAR(50)
+);
+
+INSERT INTO #TempTable (ID, Name) VALUES (1, 'John Doe'), (2, 'Jane Smith');
+
+SELECT * FROM #TempTable;
+
+
+
+-- Creating a Temporary Table in MySQL
+--CREATE TEMPORARY TABLE TempTable (
+--    ID INT,
+--    Name VARCHAR(50)
+--);
+
+-- Inserting Data
+--INSERT INTO TempTable (ID, Name) VALUES (1, 'John'), (2, 'Jane');
+
+-- Querying the Temporary Table
+--SELECT * FROM TempTable;
+
+
+
+
+
+
+-- Global Temporary Table
+CREATE TABLE ##GlobalTempTable (
+    ID INT,
+    Name NVARCHAR(50)
+);
+
+INSERT INTO ##GlobalTempTable (ID, Name) VALUES (1, 'Alice'), (2, 'Bob');
+
+SELECT * FROM ##GlobalTempTable;
+
+--There is no Global Temporary Table in MYSQL
+
+
+
+
+
+
+
+
+
+Select * from Books
+Select * from Author
+
+Select B.Author_id, A.Author_name, A.Author_contact, count(B.Author_id) as NumberOfBooksWritten
+from Books B
+Join Author A on B.Author_id = A.Author_id
+group by B.Author_id, A.Author_name, A.Author_contact
+
+SELECT Author_id, COUNT(*) AS NumberOfBooksWritten
+FROM Books
+GROUP BY Author_id
+
+
+SELECT Author_id, COUNT(*) AS NumberOfBooksWritten
+INTO #TempAuthorBookCount
+FROM Books
+GROUP BY Author_id
+
+Select * from #TempAuthorBookCount
+
+--It doesn't update the Parent Table, Because it creates a copy of the parent table.
+Update #TempAuthorBookCount set NumberOfBooksWritten = 5 where Author_id=1
+
+
+
+Select * from #TempAuthorBookCount
+Select * from Author
+
+Select B.Author_id, A.Author_name, A.Author_contact, count(B.Author_id) as NumberOfBooksWritten
+from Books B
+Join Author A on B.Author_id = A.Author_id
+group by B.Author_id, A.Author_name, A.Author_contact
+
+
+
+--We can use temptable to simplify the query.
+
+SELECT 
+    A.Author_id, A.Author_name, A.Author_contact, T.NumberOfBooksWritten
+FROM 
+	Author A
+JOIN 
+    #TempAuthorBookCount T 
+ON 
+    A.Author_id = T.Author_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Views
+
+
+CREATE VIEW
+CombinedTable AS
+
+SELECT A.Author_id, A.Author_name, G.Genre_name, G.Genre_description
+FROM Author A
+JOIN Genre G
+ON A.Author_id = G.Genre_id
+
+Select * From CombinedTable
+Select * From Author
+Select * From Genre
+
+Update CombinedTable set Author_Name='David' where Author_id=1
+Update Author Set Author_Name='Jane' where Author_id=2
+
+--It updates the Parent Table, Because it points to the parent table instead of creating copy
+
+Select * from #TempAuthorBookCount
+update #TempAuthorBookCount set NumberOfBooksWritten=5 where Author_id=1
+
+
+Go
+CREATE VIEW
+AggregatedBookTableCount AS
+SELECT Author_id, COUNT(*) AS NumberOfBooksWritten
+FROM Books
+GROUP BY Author_id
+GO
+
+Select * from AggregatedBookTableCount
+Select * from #TempAuthorBookCount
+
+Update AggregatedBookTableCount set NumberOfBooksWritten = 5 where Author_id=1
+--It points to the Parent Table, To change something in view, then you should consider the parent table structure in mind.
+
+Select * from Books
+Select * from Author
+
+--To Update the view properly, then you should use INSTEAD OF Triggers
+
+
+
+
+
+
+
