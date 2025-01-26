@@ -1,0 +1,116 @@
+
+Select * from Books
+Select * from History
+ 
+
+Go
+Alter Trigger tr_history_forInsert
+on Books
+For Insert 
+As 
+Begin
+	Declare @BookName varchar(20)
+	select @BookName = Book_name from inserted
+	--select * from inserted --inserted is a temporary table which gets created whenever a new value added in to parent table
+	insert into history values (Cast(@BookName as varchar(20)), ' inserted at - ' + Cast(GETDATE() as varchar(30)))
+
+End
+Go
+
+
+insert into books values ('PHP',1,2)
+
+
+Select * from Books
+Select * from History
+
+--Delete
+
+
+Go
+Create Trigger tr_history_forDelete --change the name
+on Books
+For Delete --change the mode
+As 
+Begin
+	Declare @BookName varchar(20)
+	select @BookName = Book_name from deleted
+	select * from deleted --deleted is a temporary table which gets created whenever a existing value deleted from a parent table.
+	insert into history values (Cast(@BookName as varchar(20)), 'deleted at - ' + Cast(GETDATE() as varchar(30)))
+End
+Go
+
+delete books where Book_name = 'SQL Server'
+
+Select * from Books
+Select * from History
+
+--update
+
+
+Go
+Create Trigger tr_history_forUpdate --change the name
+on Books
+For Update --change the mode
+As 
+Begin
+	Declare @oldBookName varchar(20)
+	select @oldBookName = Book_name from deleted
+	Declare @newBookName varchar(20)
+	select @newBookName = Book_name from inserted
+	select * from deleted
+	select * from inserted 
+	insert into history values (Cast(@oldBookName as varchar(20)), ' to '+Cast(@newBookName as varchar(20))+' - updated at - ' + Cast(GETDATE() as varchar(30)))
+End
+Go
+
+update books set  Book_name = 'MySQL' where Book_name = 'SQL Server11'
+
+Select * from Books
+Select * from History
+
+
+--Instead of triggers
+Select * from Books
+Select * from Author
+
+Go
+Create View BookDetails As
+Select B.Book_name, A.Author_Name, A.Author_Contact
+from Books B
+Join Author A
+On B.Author_id = A.Author_id
+Go
+Select * from Books
+Select * from Author
+Select * from BookDetails
+
+insert into BookDetails values ('Data Science', 'Janeaa', '9876543210')
+Select * from Books
+Select * from Author
+
+Go
+Create trigger tr_AddBooks
+on BookDetails
+Instead of Insert
+As
+Begin
+	Select * from inserted
+	Declare @TempAuthor_Id int
+	Select @TempAuthor_Id = Author_id from Author
+	Join inserted
+	on inserted.Author_Name = Author.Author_Name
+
+	if(@TempAuthor_Id is Not null)
+	Insert into Books(Book_name, Author_id, Genre_id)
+	Select Book_name, @TempAuthor_Id, 1
+	from inserted
+
+End
+
+Select * from BookDetails
+Select * from Books
+Select * from Author
+
+insert into BookDetails values ('Data Science', 'Jane', '9876543210')
+
