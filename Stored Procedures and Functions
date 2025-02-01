@@ -1,0 +1,194 @@
+CREATE PROCEDURE Sp_GetBooks
+As
+Begin
+	Select B.Author_id, A.Author_name, A.Author_contact, count(B.Author_id) as NumberOfBooksWritten
+	from Books B
+	Join Author A on B.Author_id = A.Author_id
+	group by B.Author_id, A.Author_name, A.Author_contact
+
+	--insert into Books values ('Stored Procedures', 1, 2)
+	--Update
+	--Delete
+End
+
+
+Sp_GetBooks
+Exec Sp_GetBooks
+Execute Sp_GetBooks
+
+
+
+Select * from Author
+Select * from Books
+
+
+--SP with input Parameters
+Go
+Create Proc Sp_GetBookbyBookid
+@Book_Id int
+As
+Begin
+	Select * from Books where Book_id = @Book_Id
+End
+
+Execute Sp_GetBookbyBookid 1
+Execute Sp_GetBookbyBookid @Book_Id = 5
+
+--System Stored Procedure
+sp_helptext Sp_GetBookbyBookid
+
+
+--To Change SP use Alter Procedure
+Go
+Alter Proc Sp_GetBookbyBookid
+@Author_Id int
+As
+Begin
+	Select * from Books where Author_id = @Author_Id
+End
+
+Execute Sp_GetBookbyBookid 1
+Execute Sp_GetBookbyBookid @Author_Id = 2
+
+--To Drop SP
+Drop procedure Sp_GetBookbyBookid
+
+
+--SP with output parameter
+Go
+Create Proc Sp_CountofBooksByAuthor
+@Author_Id int,
+@count int output --include the output keyword
+As
+Begin
+	Select COUNT(Book_name) from Books where Author_id = @Author_Id
+End
+
+Declare @CountofBooks int
+Execute Sp_CountofBooksByAuthor @count = @CountofBooks out, @Author_Id=2
+print @CountofBooks
+
+
+--SP Return values
+
+Go
+Create Proc Sp_CountofAllBooks
+As
+Begin
+	Return (Select COUNT(Book_name) from Books)
+End
+
+Declare @TotalBooks int
+Execute @TotalBooks = Sp_CountofAllBooks
+print @TotalBooks
+
+
+--Functions
+
+--Create Table Market
+--(
+--	Id int Primary Key,
+--	Name Varchar(50),
+--	SaleAmount int
+--)
+--insert into Market values (1, 'David', 33400)
+--insert into Market values (2, 'John', 79500)
+--insert into Market values (3, 'Tim', 40000)
+--insert into Market values (4, 'Smith', 8200)
+--insert into Market values (5, 'Lara', 23700)
+
+
+
+Select * from Market
+
+
+--Scalar function
+--A scalar function returns a single value, such as an integer, string, or date.
+
+Go
+Create FUNCTION percentageofSale(@Amount BIGINT)
+RETURNS DECIMAL(18, 2)
+AS
+BEGIN
+    DECLARE @Percentage BIGINT;
+    SET @Percentage = (CAST(@Amount AS DECIMAL(18, 2)) / 200000) * 100;
+    RETURN @Percentage;
+END
+Go
+
+SELECT Name, SaleAmount, dbo.percentageofSale(SaleAmount) AS [Percentage] 
+FROM Market
+
+
+SELECT Name, SaleAmount, dbo.percentageofSale(SaleAmount) AS [Percentage] 
+FROM Market
+Where [Percentage] < 20
+
+
+SELECT Name, SaleAmount, dbo.percentageofSale(SaleAmount) AS [Percentage] 
+FROM Market
+Where dbo.percentageofSale(SaleAmount) < 20
+
+
+--Inline Table Value Function
+--An inline table-valued function returns a table as its result and uses a single SELECT statement.
+
+--switch to College db
+Go
+CREATE FUNCTION Fn_GetBooks()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT B.Author_id, A.Author_name, A.Author_contact, COUNT(B.Author_id) AS NumberOfBooksWritten
+    FROM Books B
+    JOIN Author A ON B.Author_id = A.Author_id
+    GROUP BY B.Author_id, A.Author_name, A.Author_contact
+);
+Go
+
+SELECT * FROM dbo.Fn_GetBooks();
+
+
+--Multi-statment Table Value Function
+--A multi-statement table-valued function allows more complex logic with multiple statements and returns a table variable.
+
+Go
+Create FUNCTION GetAuthorsWithBookCount(@MinBooks INT)
+RETURNS @ResultTable TABLE (
+    Author_id INT,
+    Author_name NVARCHAR(100),
+    BookCount INT
+)
+AS
+BEGIN
+    -- Declare variables
+    DECLARE @TempTable TABLE (
+        Author_id INT,
+        Author_name NVARCHAR(100),
+        BookCount INT
+    );
+
+    -- Insert data into the temp table
+    INSERT INTO @TempTable
+    SELECT 
+        A.Author_id, 
+        A.Author_name, 
+        COUNT(B.Book_id) AS BookCount
+    FROM Author A
+    JOIN Books B ON A.Author_id = B.Author_id
+    GROUP BY A.Author_id, A.Author_name;
+
+    -- Filter based on @MinBooks
+    INSERT INTO @ResultTable
+    SELECT * 
+    FROM @TempTable
+    WHERE BookCount >= @MinBooks;
+
+    RETURN;
+END;
+Go
+
+SELECT * 
+FROM dbo.GetAuthorsWithBookCount(8);
+
