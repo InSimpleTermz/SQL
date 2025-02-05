@@ -1,0 +1,61 @@
+
+BEGIN TRANSACTION;
+-- Deduct 1000 from Account 1
+UPDATE Accounts SET Amount = Amount - 1000 WHERE ID = 1;
+
+Select * from Accounts
+
+RollBack Transaction
+
+Commit Transaction
+
+
+--Syntax 
+--Begin Transaction
+--Query
+--Rollback or commit
+
+
+Go
+BEGIN TRANSACTION;
+-- Deduct amount from Account 1
+UPDATE Accounts
+SET Amount = Amount - 1000
+WHERE ID = 1;
+
+
+-- Add amount to Account 2
+UPDATE Accounts
+SET Amount = Amount + 1000
+WHERE ID = 2;
+
+-- Check for errors
+IF @@ERROR <> 0
+    ROLLBACK TRANSACTION;
+ELSE
+    COMMIT TRANSACTION;
+
+Select * from Accounts
+
+
+
+
+
+
+--Transaction inside Try Catch and SP
+Go
+Create Procedure SP_BankTransaction
+As 
+Begin
+	Begin Try
+		Begin Transaction
+			UPDATE Accounts SET Amount = Amount - 1000 WHERE ID = 1;
+			UPDATE Accounts SET Amount = Amount + 1000 WHERE ID = 2;
+
+		Commit Transaction
+		Print 'Transaction committed'
+	End Try
+	Begin Catch
+		RollBack Transaction
+	End Catch
+End
