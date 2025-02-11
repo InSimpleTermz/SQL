@@ -1,0 +1,81 @@
+
+Select * from Employee
+Select * from Department
+
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM Employee e
+INNER JOIN Department d ON e.dept_id = d.dept_id
+
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM Employee e
+LEFT JOIN Department d ON e.dept_id = d.dept_id
+
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM Employee e
+RIGHT JOIN Department d ON e.dept_id = d.dept_id;
+
+
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM Employee e
+FULL JOIN Department d ON e.dept_id = d.dept_id;
+
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM Employee e
+CROSS JOIN Department d;
+
+
+ALTER TABLE Employee 
+ADD ManagerID int;
+
+update Employee set ManagerID=Null where emp_id = 1
+update Employee set ManagerID=1 where emp_id = 2
+update Employee set ManagerID=1 where emp_id = 3
+update Employee set ManagerID=2 where emp_id = 4
+
+
+Select * from Employee
+
+SELECT e1.emp_name AS Employee, e2.emp_name AS Manager
+FROM Employee e1
+Left JOIN Employee e2 ON e2.emp_id = e1.ManagerId;
+
+
+
+
+
+--Union & Union ALL
+
+insert into Employee values (5, 'Bob', 104, 2)
+
+Select * from Employee
+Select * from Department
+
+
+--Columns should be same in number and type
+SELECT emp_name FROM Employee
+UNION 
+SELECT dept_name FROM Department;
+
+--Changing the type
+SELECT emp_name FROM Employee
+UNION 
+SELECT Dept_id FROM Department;
+
+--Adding extra columns
+SELECT emp_name FROM Employee
+UNION 
+SELECT dept_id, dept_name FROM Department;
+
+--Equalizing columns
+SELECT emp_id, emp_name FROM Employee
+UNION
+SELECT dept_id, dept_name FROM Department;
+
+--Union All
+SELECT emp_name FROM Employee
+UNION ALL 
+SELECT dept_name FROM Department;
+
+SELECT emp_name FROM Employee
+UNION 
+SELECT dept_name FROM Department;
