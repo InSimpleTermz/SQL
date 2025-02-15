@@ -1,0 +1,60 @@
+use sys;
+
+CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'Admin123';
+
+SHOW GRANTS FOR 'new_user'@'localhost';
+
+GRANT SELECT, INSERT ON sys.employee TO 'new_user'@'localhost';
+
+Select * from employee;
+
+
+SHOW GRANTS FOR 'new_user'@'localhost';
+
+
+
+use sys;
+Select * from employee;
+
+insert into employee values (6,'testing1',1,1);
+
+delete from employee where id=5;
+
+SHOW GRANTS FOR 'new_user'@'localhost';
+
+
+
+
+
+
+-- CREATE TABLE employee (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     name VARCHAR(100) NOT NULL,
+--     dept VARCHAR(50) NOT NULL,
+--     managerid INT
+-- );
+
+-- insert into employee values (1,'David','HR',0);
+-- insert into employee values (2, 'John','IT',1);
+-- insert into employee values (3, 'Tim','IT',2);
+-- insert into employee values (4, 'Mary','HR',1);
+
+-- update employee set dept='1' where id=1;
+-- update employee set dept='2' where id=2;
+-- update employee set dept='2' where id=3;
+-- update employee set dept='1' where id=4;
+
+
+-- Select * from employee;
+-- Select * from dept;
+
+
+-- CREATE TABLE dept (
+--     id INT PRIMARY KEY,
+--     department_name VARCHAR(50) NOT NULL
+-- );
+
+-- INSERT INTO dept (id, department_name) VALUES 
+-- (1, 'HR'),
+-- (2, 'IT'),
+-- (3, 'Unknown');
